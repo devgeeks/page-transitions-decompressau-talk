@@ -1,7 +1,8 @@
 # Hardware Accelerated Page Transitions for Mobile
-> A [Bespoke.js](http://markdalgleish.com/projects/bespoke.js) presentation, built with [generator-bespoke](https://github.com/markdalgleish/generator-bespoke)
 
 [http://devgeeks.github.io/page-transitions-decompressau-talk/](http://devgeeks.github.io/page-transitions-decompressau-talk/)
+
+> A [Bespoke.js](http://markdalgleish.com/projects/bespoke.js) presentation, built with [generator-bespoke](https://github.com/markdalgleish/generator-bespoke)
 
 ## View slides locally
 
