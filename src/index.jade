@@ -1,0 +1,220 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title Hardware Accelerated Page Transitions for Mobile
+
+    // build:css styles/styles.css
+    //- Check out 'src/bower_components/prism/themes/' for available themes
+    link(rel='stylesheet', type='text/css', href='bower_components/prism/themes/prism-tomorrow.css')
+    link(rel='stylesheet', type='text/css', href='styles/main.css')
+    // endbuild
+
+  body
+
+    article
+
+      section
+        h1 Hardware Accelerated Page Transitions for Mobile Apps
+
+      section
+        h4 OR
+        hr
+        hr
+        hr
+        h2 How *NOT* to end up using <strike>jQuery Mobile</strike> a UI Framework Just to Have Sliding Pages
+
+      section
+        h1 Who am I ?
+        h2(style="color: #fff;") Tommy-Carlos Williams 
+        hr
+        h3
+          small 
+            a(href='mailto:tommy@devgeeks.org') tommy@devgeeks.org
+        h3
+          small
+            a(href='http://twitter.com/theRealDevgeeks') @theRealDevgeeks
+        hr
+        h3
+          small
+            a(href='http://blog.devgeeks.org') http://blog.devgeeks.org
+        h3
+          small
+            a(href='http://github.com/devgeeks') http://github.com/devgeeks
+        h3
+          small
+            a(href='#') blah blah blah no one cares
+
+      section
+        h2 0. Meta Tags
+        p Before we do *any* CSS, we need to let the device know we mean business
+        pre
+          code.
+            &lt;meta name="viewport" content="user-scalable=no, 
+            initial-scale=1, maximum-scale=1, minimum-scale=1, 
+            width=device-width" /&gt;
+
+      section
+        h2 1. A Container
+        p We need to start by having a viewport sized container for our pages
+        pre
+          code.language-css.
+            #container {
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+              overflow: hidden;
+            }
+        p
+          small Note: You might need to adjust some of these positions depending on your app.
+
+      section
+        h2 2. A Page
+        p Next we need a page class to set the size of our pages (much like the above)
+        pre
+          code.language-css.
+            .page {
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+              overflow: auto;
+              -webkit-overflow-scrolling: touch;
+            }
+
+      section
+        h2 3. Our Page Layout
+        img(src="http://coenraets.org/blog/wp-content/uploads/2013/03/pageslider2.png")
+        p
+          small The above image and the basis for this talk are from a fantastic post by Christophe Coenraets called<br><a href="http://coenraets.org/blog/2013/03/hardware-accelerated-page-transitions-for-mobile-web-apps-phonegap-apps/">Hardware-Accelerated Page Transitions for Mobile Web Apps / PhoneGap Apps</a>
+      
+      section
+        h2 What Makes a Transition "Hardware Accelerated"?
+        hr
+        ul.bullet
+          li &#x226B; "top/left animation" is <strong>not</strong> hardware accelerated
+          li &#x226B; These animations will force a layout on each change
+        pre.bullet
+          code.language-css.
+            .page.left { left: -100%; }
+        ul.bullet
+          li &#x226B; 3d transforms of a page's coordinates <strong>are</strong> hardware accelerated
+        pre.bullet
+          code.language-css.
+            .page.left { transform: translate3d(-100%, 0, 0); }
+
+      section
+        h2 4. Page Positions
+        p Next we add some CSS to set up the three possible positions for our pages
+        pre
+          code.language-css.
+            .page.left { transform: translate3d(-100%, 0, 0); }
+            .page.center { transform: translate3d(0, 0, 0); }
+            .page.right { transform: translate3d(100%, 0, 0); }
+        hr
+        p
+          small Note: For brevity, only the unprefixed "transform" is being shown
+
+      section
+        h2 5. The Transition
+        p This is where we can set up the speed and easing method of the transition
+        pre
+          code.language-css.
+            .page.transition {
+              transition-duration: .25s;
+              transition-timing-function: ease-in-out;
+            }
+        p
+          small Again, these will need prefixing for most real-world use
+
+      section
+        h2 JavaScript
+        p Push some classes around
+        pre
+          code.language-javascript.
+            var homePage = document.getElementById("homePage"),
+              page1 = document.getElementById("p1");
+
+            function slidePage() { 
+              page1.className = "page right";
+              page1.className = "page transition center";
+              homePage.className = "page transition left";
+            }
+        p
+          small ...though that's a bit oversimplified
+
+      section
+        h2 A little fancier...
+        pre
+          code.language-javascript.
+            var homePage = document.getElementById("homePage"),
+              page1 = document.getElementById("p1"),
+              currentPage = homePage;
+
+            function slidePageFrom(page, from) {
+              page.className = "page " + from;
+              page.className ="page transition center";
+              currentPage.className = "page transition " +
+                (from === "left" ? "right" : "left");
+              currentPage = page;
+            }
+        p
+          small Better...
+
+      section
+        h1 DEMO
+
+      section
+        h2 Shortcuts
+        p Or: "This is a Hackathon! I don't have time to DIY!"
+        hr
+        ul.bullet
+          li &#x226B; In <a href="http://zeptojs.com">Zepto.js</a> – $.fn.animate() 
+            small uses CSS transitions where available.
+          li &#x226B; Christophe Coenraets' <a href="https://github.com/ccoenraets/PageSlider">PageSlider.js</a> 
+            small micro library that this talk is based on
+          li &#x226B; Piotr Walczyszyn's <a href="https://github.com/pwalczyszyn/backstack">Backstack</a> 
+            small for Backbone users
+
+      section
+        h1 MOAR DEMOS
+
+      section
+        h1 Thanks!
+        hr
+        p Feel free to ask me any Cordova / PhoneGap questions you may have, as long as they have nothing to do with jQuery Mobile.
+        hr
+        hr
+        hr
+        p Just kidding.*
+        hr
+        hr
+        hr
+        hr
+        hr
+        hr
+        hr
+        hr
+        hr
+        hr
+        hr
+        p 
+          small * I'm totally not kidding...
+
+
+    // build:js scripts/scripts.js
+    script(src='bower_components/bespoke.js/dist/bespoke.min.js')
+    script(src='bower_components/bespoke-keys/dist/bespoke-keys.min.js')
+    script(src='bower_components/bespoke-touch/dist/bespoke-touch.min.js')
+    script(src='bower_components/bespoke-bullets/dist/bespoke-bullets.min.js')
+    script(src='bower_components/bespoke-scale/dist/bespoke-scale.min.js')
+    script(src='bower_components/bespoke-hash/dist/bespoke-hash.min.js')
+    script(src='bower_components/bespoke-progress/dist/bespoke-progress.min.js')
+    script(src='bower_components/bespoke-state/dist/bespoke-state.min.js')
+    script(src='bower_components/prism/prism.js')
+    script(src='scripts/main.js')
+    // endbuild
