@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Hardware Accelerated Page Transitions for Mobile</title>
+    <link rel="stylesheet" href="styles/styles.css"/>
+  </head>
+  <body>
+    <article>
+      <section>
+        <h1>Hardware Accelerated Page Transitions for Mobile Apps</h1>
+      </section>
+      <section>
+        <h4>OR</h4>
+        <hr>
+        <hr>
+        <hr>
+        <h2>How *NOT* to end up using <strike>jQuery Mobile</strike> a UI Framework Just to Have Sliding Pages</h2>
+      </section>
+      <section>
+        <h1>Who am I ?</h1>
+        <h2 style="color: #fff;">Tommy-Carlos Williams </h2>
+        <hr>
+        <h3><small><a href="mailto:tommy@devgeeks.org">tommy@devgeeks.org</a></small></h3>
+        <h3><small><a href="http://twitter.com/theRealDevgeeks">@theRealDevgeeks</a></small></h3>
+        <hr>
+        <h3><small><a href="http://blog.devgeeks.org">http://blog.devgeeks.org</a></small></h3>
+        <h3><small><a href="http://github.com/devgeeks">http://github.com/devgeeks</a></small></h3>
+        <h3><small><a href="#">blah blah blah no one cares</a></small></h3>
+      </section>
+      <section>
+        <h2>0. Meta Tags</h2>
+        <p>Before we do *any* CSS, we need to let the device know we mean business</p>
+        <pre><code>&lt;meta name="viewport" content="user-scalable=no, 
+initial-scale=1, maximum-scale=1, minimum-scale=1, 
+width=device-width" /&gt;
+</code></pre>
+      </section>
+      <section>
+        <h2>1. A Container</h2>
+        <p>We need to start by having a viewport sized container for our pages</p>
+        <pre><code class="language-css">#container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}</code></pre>
+        <p><small>Note: You might need to adjust some of these positions depending on your app.</small></p>
+      </section>
+      <section>
+        <h2>2. A Page</h2>
+        <p>Next we need a page class to set the size of our pages (much like the above)</p>
+        <pre><code class="language-css">.page {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+</code></pre>
+      </section>
+      <section>
+        <h2>3. Our Page Layout</h2><img src="http://coenraets.org/blog/wp-content/uploads/2013/03/pageslider2.png">
+        <p><small>The above image and the basis for this talk are from a fantastic post by Christophe Coenraets called<br><a href="http://coenraets.org/blog/2013/03/hardware-accelerated-page-transitions-for-mobile-web-apps-phonegap-apps/">Hardware-Accelerated Page Transitions for Mobile Web Apps / PhoneGap Apps</a></small></p>
+      </section>
+      <section>
+        <h2>What Makes a Transition "Hardware Accelerated"?</h2>
+        <hr>
+        <ul class="bullet">
+          <li>&#x226B; "top/left animation" is <strong>not</strong> hardware accelerated</li>
+          <li>&#x226B; These animations will force a layout on each change</li>
+        </ul>
+        <pre class="bullet"><code class="language-css">.page.left { left: -100%; }</code></pre>
+        <ul class="bullet">
+          <li>&#x226B; 3d transforms of a page's coordinates <strong>are</strong> hardware accelerated</li>
+        </ul>
+        <pre class="bullet"><code class="language-css">.page.left { transform: translate3d(-100%, 0, 0); }
+</code></pre>
+      </section>
+      <section>
+        <h2>4. Page Positions</h2>
+        <p>Next we add some CSS to set up the three possible positions for our pages</p>
+        <pre><code class="language-css">.page.left { transform: translate3d(-100%, 0, 0); }
+.page.center { transform: translate3d(0, 0, 0); }
+.page.right { transform: translate3d(100%, 0, 0); }</code></pre>
+        <hr>
+        <p><small>Note: For brevity, only the unprefixed "transform" is being shown</small></p>
+      </section>
+      <section>
+        <h2>5. The Transition</h2>
+        <p>This is where we can set up the speed and easing method of the transition</p>
+        <pre><code class="language-css">.page.transition {
+  transition-duration: .25s;
+  transition-timing-function: ease-in-out;
+}</code></pre>
+        <p><small>Again, these will need prefixing for most real-world use</small></p>
+      </section>
+      <section>
+        <h2>JavaScript</h2>
+        <p>Push some classes around</p>
+        <pre><code class="language-javascript">var homePage = document.getElementById("homePage"),
+  page1 = document.getElementById("p1");
+  
+function slidePage() { 
+  page1.className = "page right";
+  page1.className = "page transition center";
+  homePage.className = "page transition left";
+}</code></pre>
+        <p><small>...though that's a bit oversimplified</small></p>
+      </section>
+      <section>
+        <h2>A little fancier...</h2>
+        <pre><code class="language-javascript">var homePage = document.getElementById("homePage"),
+  page1 = document.getElementById("p1"),
+  currentPage = homePage;
+  
+function slidePageFrom(page, from) {
+  page.className = "page " + from;
+  page.className ="page transition center";
+  currentPage.className = "page transition " +
+    (from === "left" ? "right" : "left");
+  currentPage = page;
+}</code></pre>
+        <p><small>Better...</small></p>
+      </section>
+      <section>
+        <h1>DEMO</h1>
+      </section>
+      <section>
+        <h2>Shortcuts</h2>
+        <p>Or: "This is a Hackathon! I don't have time to DIY!"</p>
+        <hr>
+        <ul class="bullet">
+          <li>&#x226B; In <a href="http://zeptojs.com">Zepto.js</a> – $.fn.animate() <small>uses CSS transitions where available.</small></li>
+          <li>&#x226B; Christophe Coenraets' <a href="https://github.com/ccoenraets/PageSlider">PageSlider.js</a> <small>micro library that this talk is based on</small></li>
+          <li>&#x226B; Piotr Walczyszyn's <a href="https://github.com/pwalczyszyn/backstack">Backstack</a> <small>for Backbone users</small></li>
+        </ul>
+      </section>
+      <section>
+        <h1>MOAR DEMOS</h1>
+      </section>
+      <section>
+        <h1>Thanks!</h1>
+        <hr>
+        <p>Feel free to ask me any Cordova / PhoneGap questions you may have, as long as they have nothing to do with jQuery Mobile.</p>
+        <hr>
+        <hr>
+        <hr>
+        <p>Just kidding.*</p>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <hr>
+        <p><small>* I'm totally not kidding...</small></p>
+      </section>
+    </article>
+    <script src="scripts/scripts.js"></script>
+  </body>
+</html>
